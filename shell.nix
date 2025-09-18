@@ -12,8 +12,8 @@ pkgs.mkShell {
     if [ -f pyproject.toml ]; then
       echo "Installing dependencies with Poetry..."
       poetry install
-      echo "Activating Poetry shell..."
-      poetry shell
+      echo "Poetry environment is ready!"
+      echo "Run 'poetry run dev' to start the application"
     fi
   '';
 }
