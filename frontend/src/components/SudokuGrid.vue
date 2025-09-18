@@ -24,7 +24,6 @@
             :placeholder="''"
             size="small"
             @update:modelValue="handleCellChange(i, j, $event)"
-            @blur="validateAndUpdateCell(i, j)"
           />
         </div>
       </div>
@@ -116,7 +115,7 @@ const getCellClasses = (row: number, col: number): string[] => {
 }
 
 // Handle cell value changes
-const handleCellChange = (row: number, col: number, value: number | null) => {
+const handleCellChange = async (row: number, col: number, value: number | null) => {
   // Validate input (1-9 or null for empty)
   if (value !== null && (value < 1 || value > 9)) {
     // Reset to original value
@@ -127,6 +126,21 @@ const handleCellChange = (row: number, col: number, value: number | null) => {
   
   // Update local state immediately for responsive UI
   gridValues.value[row][col] = value
+  
+  // Also update backend immediately for conflict detection
+  const currentValue = value ?? 0
+  const originalValue = sudokuStore.gridState?.grid[row][col] || 0
+  
+  // Only update backend if value actually changed
+  if (currentValue !== originalValue) {
+    const success = await sudokuStore.updateCell(row, col, currentValue)
+    
+    if (!success) {
+      // Reset to original value if update failed
+      const resetValue = originalValue === 0 ? null : originalValue
+      gridValues.value[row][col] = resetValue
+    }
+  }
 }
 
 // Validate and update cell through API

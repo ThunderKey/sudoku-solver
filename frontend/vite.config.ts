@@ -15,6 +15,12 @@ export default defineConfig({
   server: {
     host: '0.0.0.0',
     port: 5000,
+    allowedHosts: [
+      'localhost',
+      '127.0.0.1',
+      '473e4acf-99fe-400b-a9db-8840a600e0ef-00-2qroo8cu7apev.riker.replit.dev',
+      '.replit.dev'
+    ],
     proxy: {
       '/api': {
         target: 'http://localhost:8000',
