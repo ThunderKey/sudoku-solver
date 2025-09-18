@@ -167,13 +167,7 @@ def main():
 def render_sudoku_grid(validator):
     """Render the interactive Sudoku grid"""
     
-    # Input method selection
-    input_method = st.radio(
-        "Input Method:",
-        ["Number Input (Default)", "Text Input (Alternative)"],
-        horizontal=True,
-        help="Switch to Text Input if you experience typing delays"
-    )
+    # Using text input for better responsiveness
     st.markdown("""
     <style>
     .sudoku-container {
@@ -207,45 +201,30 @@ def render_sudoku_grid(validator):
         cols = st.columns(9)
         for j in range(9):
             with cols[j]:
-                input_method_key = "num" if input_method == "Number Input (Default)" else "txt"
-                key = f"cell_{i}_{j}_{st.session_state.grid_version}_{input_method_key}"
+                key = f"cell_{i}_{j}_{st.session_state.grid_version}"
                 current_value = int(st.session_state.grid[i, j])
                 
                 # Determine if this is an original clue
                 is_given = st.session_state.original_grid[i, j] != 0
                 
-                if input_method == "Number Input (Default)":
-                    new_value = st.number_input(
-                        f"Cell ({i+1},{j+1})",
-                        min_value=0,
-                        max_value=9,
-                        value=current_value,
-                        step=1,
-                        key=key,
-                        disabled=is_given,
-                        label_visibility="collapsed",
-                        format="%d"
-                    )
+                # Text input for grid cells
+                display_value = str(current_value) if current_value != 0 else ""
+                text_value = st.text_input(
+                    f"Cell ({i+1},{j+1})",
+                    value=display_value,
+                    max_chars=1,
+                    key=key,
+                    disabled=is_given,
+                    label_visibility="collapsed"
+                )
+                
+                # Validate and convert text input
+                if text_value == "" or text_value == "0":
+                    new_value = 0
+                elif text_value.isdigit() and 1 <= int(text_value) <= 9:
+                    new_value = int(text_value)
                 else:
-                    # Text input alternative for better responsiveness
-                    display_value = str(current_value) if current_value != 0 else ""
-                    text_value = st.text_input(
-                        f"Cell ({i+1},{j+1})",
-                        value=display_value,
-                        max_chars=1,
-                        key=key,
-                        disabled=is_given,
-                        label_visibility="collapsed",
-                        placeholder="1-9"
-                    )
-                    
-                    # Validate and convert text input
-                    if text_value == "" or text_value == "0":
-                        new_value = 0
-                    elif text_value.isdigit() and 1 <= int(text_value) <= 9:
-                        new_value = int(text_value)
-                    else:
-                        new_value = st.session_state.grid[i, j]  # Keep current value if invalid
+                    new_value = st.session_state.grid[i, j]  # Keep current value if invalid
                 
                 # Update grid without immediate rerun to allow smoother typing
                 if new_value != st.session_state.grid[i, j]:
