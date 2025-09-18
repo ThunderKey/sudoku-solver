@@ -199,7 +199,7 @@ def render_sudoku_grid(validator):
                 is_given = st.session_state.original_grid[i, j] != 0
                 
                 new_value = st.number_input(
-                    "",
+                    f"Cell ({i+1},{j+1})",
                     min_value=0,
                     max_value=9,
                     value=current_value,

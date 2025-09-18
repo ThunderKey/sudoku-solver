@@ -78,7 +78,7 @@ class SudokuValidator:
     @staticmethod
     def is_complete(grid: np.ndarray) -> bool:
         """Check if the puzzle is completely solved"""
-        return np.all(grid != 0) and SudokuValidator.is_valid_state(grid)
+        return bool(np.all(grid != 0)) and SudokuValidator.is_valid_state(grid)
     
     @staticmethod
     def get_empty_cells(grid: np.ndarray) -> List[Tuple[int, int]]:

@@ -2,7 +2,7 @@ import importlib
 import importlib.util
 import inspect
 from pathlib import Path
-from typing import Dict, Type, List
+from typing import Dict, Type, List, Optional
 import sys
 import os
 
@@ -73,7 +73,7 @@ class PluginManager:
         """Get dictionary of available solver classes"""
         return self.solvers.copy()
     
-    def get_solver(self, name: str) -> Type[SudokuSolver]:
+    def get_solver(self, name: str) -> Optional[Type[SudokuSolver]]:
         """Get a specific solver class by name"""
         return self.solvers.get(name)
     
