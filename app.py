@@ -161,6 +161,14 @@ def main():
 
 def render_sudoku_grid(validator):
     """Render the interactive Sudoku grid"""
+    
+    # Input method selection
+    input_method = st.radio(
+        "Input Method:",
+        ["Number Input (Default)", "Text Input (Alternative)"],
+        horizontal=True,
+        help="Switch to Text Input if you experience typing delays"
+    )
     st.markdown("""
     <style>
     .sudoku-container {
@@ -200,23 +208,44 @@ def render_sudoku_grid(validator):
                 # Determine if this is an original clue
                 is_given = st.session_state.original_grid[i, j] != 0
                 
-                new_value = st.number_input(
-                    f"Cell ({i+1},{j+1})",
-                    min_value=0,
-                    max_value=9,
-                    value=current_value,
-                    step=1,
-                    key=key,
-                    disabled=is_given,
-                    label_visibility="collapsed"
-                )
+                if input_method == "Number Input (Default)":
+                    new_value = st.number_input(
+                        f"Cell ({i+1},{j+1})",
+                        min_value=0,
+                        max_value=9,
+                        value=current_value,
+                        step=1,
+                        key=key,
+                        disabled=is_given,
+                        label_visibility="collapsed",
+                        format="%d"
+                    )
+                    
+                    if new_value is None:
+                        new_value = 0
+                else:
+                    # Text input alternative for better responsiveness
+                    text_value = st.text_input(
+                        f"Cell ({i+1},{j+1})",
+                        value=str(current_value) if current_value else "",
+                        max_chars=1,
+                        key=key,
+                        disabled=is_given,
+                        label_visibility="collapsed",
+                        placeholder="1-9"
+                    )
+                    
+                    # Validate and convert text input
+                    if text_value == "" or text_value == "0":
+                        new_value = 0
+                    elif text_value.isdigit() and 1 <= int(text_value) <= 9:
+                        new_value = int(text_value)
+                    else:
+                        new_value = st.session_state.grid[i, j]  # Keep current value if invalid
                 
-                if new_value is None:
-                    new_value = 0
-                
+                # Update grid without immediate rerun to allow smoother typing
                 if new_value != st.session_state.grid[i, j]:
                     st.session_state.grid[i, j] = new_value
-                    st.rerun()
 
 def solve_puzzle(solver_class, show_steps, validator):
     """Solve the puzzle using the selected solver"""
