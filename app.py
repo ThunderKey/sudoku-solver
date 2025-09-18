@@ -20,6 +20,8 @@ if 'current_step' not in st.session_state:
     st.session_state.current_step = 0
 if 'solving' not in st.session_state:
     st.session_state.solving = False
+if 'plugin_manager' not in st.session_state:
+    st.session_state.plugin_manager = PluginManager()
 
 def main():
     st.set_page_config(
@@ -33,7 +35,7 @@ def main():
     
     # Initialize components
     validator = SudokuValidator()
-    plugin_manager = PluginManager()
+    plugin_manager = st.session_state.plugin_manager
     file_handler = FileHandler()
     
     # Sidebar for controls
