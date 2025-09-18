@@ -167,107 +167,94 @@ def main():
 def render_sudoku_grid(validator):
     """Render the interactive Sudoku grid"""
     
-    # Sven's SudokuPad styling - scoped selectors with 3x3 box separation
+    # Authentic SudokuPad styling - clean and minimal design
     st.markdown("""
     <style>
-    /* Scoped Sudoku grid input styling using aria-label for precision */
+    /* Clean SudokuPad grid styling using aria-label selectors */
     input[aria-label^="Cell ("] {
-        width: clamp(36px, min(6.5vw, 6.5vh), 52px) !important;
-        height: clamp(36px, min(6.5vw, 6.5vh), 52px) !important;
+        width: 50px !important;
+        height: 50px !important;
         text-align: center !important;
-        font-size: 20px !important;
-        font-weight: 600 !important;
-        font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif !important;
-        border-radius: 4px !important;
-        border: 2px solid #e0e0e0 !important;
-        background-color: white !important;
-        color: #3498db !important;
-        transition: all 0.2s ease !important;
-        outline: 2px solid transparent !important;
-        box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1) !important;
+        font-size: 18px !important;
+        font-weight: bold !important;
+        font-family: Arial, sans-serif !important;
+        border-radius: 0 !important;
+        border: 1px solid #ddd !important;
+        background-color: #ffffff !important;
+        color: #333333 !important;
+        outline: none !important;
+        box-shadow: none !important;
         padding: 0 !important;
         margin: 0 !important;
         line-height: 1 !important;
         -webkit-appearance: none !important;
         -moz-appearance: none !important;
         appearance: none !important;
+        transition: none !important;
     }
     
-    /* Hover and focus states */
-    input[aria-label^="Cell ("]:hover {
-        border-color: #3498db !important;
-        box-shadow: 0 2px 8px rgba(52, 152, 219, 0.25), inset 0 1px 2px rgba(0, 0, 0, 0.1) !important;
+    /* Reset any default focus/active states first */
+    input[aria-label^="Cell ("]:focus,
+    input[aria-label^="Cell ("]:active {
+        background-color: #ffffff !important;
+        border: 1px solid #ddd !important;
+        outline: 2px solid #4a90e2 !important;
+        outline-offset: -2px !important;
     }
     
-    input[aria-label^="Cell ("]:focus {
-        border-color: #3498db !important;
-        outline: 2px solid rgba(52, 152, 219, 0.4) !important;
-        outline-offset: 1px !important;
-        box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.15), inset 0 1px 2px rgba(0, 0, 0, 0.1) !important;
+    /* Simple hover effect - only on actual hover */
+    input[aria-label^="Cell ("]:hover:not(:focus) {
+        background-color: #f0f8ff !important;
     }
     
     /* Given numbers (disabled inputs) styling */
     input[aria-label^="Cell ("]:disabled {
         background-color: #f8f9fa !important;
-        color: #2c3e50 !important;
-        font-weight: 700 !important;
-        border-color: #d0d0d0 !important;
+        color: #212529 !important;
+        font-weight: bold !important;
         cursor: not-allowed !important;
         opacity: 1 !important;
-        box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.05) !important;
     }
     
-    /* 3x3 Box Separation - Thick borders for Sven's SudokuPad look */
+    /* Force white background for all non-disabled cells */
+    input[aria-label^="Cell ("]:not(:disabled):not(:hover):not(:focus) {
+        background-color: #ffffff !important;
+    }
     
-    /* Right borders for columns 3 and 6 (cells ending in ,3) and ,6)) */
+    /* 3x3 Box Separation - Bold black borders for authentic SudokuPad look */
+    
+    /* Right borders for columns 3 and 6 */
     input[aria-label$=",3)"], input[aria-label$=",6)"] {
-        border-right: 4px solid #34495e !important;
+        border-right: 3px solid #000000 !important;
     }
     
-    /* Bottom borders for rows 3 and 6 (cells starting with Cell (3, and Cell (6,) */
+    /* Bottom borders for rows 3 and 6 */
     input[aria-label^="Cell (3,"], input[aria-label^="Cell (6,"] {
-        border-bottom: 4px solid #34495e !important;
+        border-bottom: 3px solid #000000 !important;
     }
     
-    /* Outer frame borders */
+    /* Outer frame borders - bold black */
     /* Top border for first row */
     input[aria-label^="Cell (1,"] {
-        border-top: 4px solid #34495e !important;
+        border-top: 3px solid #000000 !important;
     }
     
     /* Left border for first column */
     input[aria-label$=",1)"] {
-        border-left: 4px solid #34495e !important;
+        border-left: 3px solid #000000 !important;
     }
     
     /* Bottom border for last row */
     input[aria-label^="Cell (9,"] {
-        border-bottom: 4px solid #34495e !important;
+        border-bottom: 3px solid #000000 !important;
     }
     
     /* Right border for last column */
     input[aria-label$=",9)"] {
-        border-right: 4px solid #34495e !important;
+        border-right: 3px solid #000000 !important;
     }
     
-    /* Corner rounding for outer cells */
-    input[aria-label="Cell (1,1)"] {
-        border-top-left-radius: 8px !important;
-    }
-    
-    input[aria-label="Cell (1,9)"] {
-        border-top-right-radius: 8px !important;
-    }
-    
-    input[aria-label="Cell (9,1)"] {
-        border-bottom-left-radius: 8px !important;
-    }
-    
-    input[aria-label="Cell (9,9)"] {
-        border-bottom-right-radius: 8px !important;
-    }
-    
-    /* Grid layout improvements */
+    /* Clean layout without unnecessary styling */
     div[data-testid="column"] {
         padding: 0 !important;
         margin: 0 !important;
@@ -276,7 +263,7 @@ def render_sudoku_grid(validator):
         align-items: center !important;
     }
     
-    /* Hide labels completely */
+    /* Hide labels */
     label[data-testid="stTextInput-label"] {
         display: none !important;
     }
@@ -291,14 +278,35 @@ def render_sudoku_grid(validator):
         margin: 0 !important;
     }
     
-    /* Sudoku Grid Container Styling - for visual appeal */
+    /* Simple container - minimal styling */
     .sudoku-grid-wrapper {
-        background: #f8f9fa;
-        border-radius: 16px;
-        padding: 20px;
-        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+        background: #ffffff;
+        padding: 10px;
         margin: 16px auto;
-        max-width: 520px;
+        max-width: 470px;
+        border: 3px solid #000000;
+    }
+    
+    /* Force Arial font for consistent SudokuPad aesthetic */
+    .stMarkdown h3, .stMarkdown h2, .stMarkdown h1 {
+        font-family: Arial, sans-serif !important;
+    }
+    
+    /* Global font consistency for app container */
+    [data-testid="stAppViewContainer"], 
+    .main .block-container,
+    .stMarkdown,
+    .stSelectbox label,
+    .stButton button,
+    .stMarkdown * {
+        font-family: Arial, sans-serif !important;
+    }
+    
+    /* Force Arial on main title specifically */
+    .main .block-container > div:first-child h1,
+    .main .block-container h1:first-of-type,
+    h1 {
+        font-family: Arial, sans-serif !important;
     }
     </style>
     """, unsafe_allow_html=True)
