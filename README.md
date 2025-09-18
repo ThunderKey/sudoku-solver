@@ -34,7 +34,7 @@ cd sudoku-solver
 direnv allow
 
 # Run the application (dependencies are automatically installed)
-streamlit run app.py --server.port 5000
+poetry run dev
 ```
 
 The Nix shell will automatically provide Python 3.11 and Poetry, install dependencies, and activate the Poetry environment.
@@ -48,6 +48,9 @@ If you have Poetry installed:
 poetry install
 
 # Run the application
+poetry run dev
+
+# Or use the full command
 poetry run streamlit run app.py --server.port 5000
 
 # Or activate the virtual environment
