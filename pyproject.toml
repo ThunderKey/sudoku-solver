@@ -4,7 +4,6 @@ version = "0.1.0"
 description = "Interactive Sudoku solver with plugin system"
 authors = ["Your Name <your.email@example.com>"]
 readme = "README.md"
-packages = [{include = "sudoku_solver", from = "."}]
 
 [tool.poetry.dependencies]
 python = "^3.11"
