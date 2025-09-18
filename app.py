@@ -1,4 +1,3 @@
-import streamlit as st
 from controller import SudokuController
 from view import MainView
 
@@ -25,28 +24,20 @@ def handle_actions(controller: SudokuController, actions: dict):
     if 'upload_file' in actions:
         success, message = controller.load_puzzle_from_file(actions['upload_file'])
         if success:
-            st.success(message)
-            st.rerun()
+            print(message)
         else:
-            st.error(message)
+            print(f"Error: {message}")
     
     if 'download_puzzle' in actions:
         puzzle_data = controller.save_current_puzzle()
-        st.download_button(
-            label="Download JSON",
-            data=puzzle_data,
-            file_name="sudoku_puzzle.json",
-            mime="application/json"
-        )
+        print(f"Puzzle data ready for download: {len(puzzle_data)} bytes")
     
     # Grid operations
     if 'clear_grid' in actions:
         controller.clear_grid()
-        st.rerun()
     
     if 'load_sample' in actions:
         controller.load_sample_puzzle()
-        st.rerun()
     
     # Cell updates
     if 'cell_updates' in actions:
@@ -62,16 +53,14 @@ def handle_actions(controller: SudokuController, actions: dict):
             solver_data['show_steps']
         )
         if success:
-            st.success(message)
+            print(message)
         else:
-            st.error(message)
-        st.rerun()
+            print(f"Error: {message}")
     
     # Step navigation
     if 'navigate_step' in actions:
         direction = actions['navigate_step']
-        if controller.navigate_solution_step(direction):
-            st.rerun()
+        controller.navigate_solution_step(direction)
 
 
 if __name__ == "__main__":
