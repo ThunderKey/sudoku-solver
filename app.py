@@ -22,6 +22,8 @@ if 'solving' not in st.session_state:
     st.session_state.solving = False
 if 'plugin_manager' not in st.session_state:
     st.session_state.plugin_manager = PluginManager()
+if 'grid_version' not in st.session_state:
+    st.session_state.grid_version = 0
 
 def main():
     st.set_page_config(
@@ -50,6 +52,7 @@ def main():
                 grid = file_handler.load_puzzle(uploaded_file)
                 st.session_state.grid = grid
                 st.session_state.original_grid = grid.copy()
+                st.session_state.grid_version += 1
                 st.success("Puzzle loaded successfully!")
                 st.rerun()
             except Exception as e:
@@ -71,6 +74,7 @@ def main():
             st.session_state.original_grid = np.zeros((9, 9), dtype=int)
             st.session_state.solution_steps = []
             st.session_state.current_step = 0
+            st.session_state.grid_version += 1
             st.rerun()
         
         if st.button("Load Sample Puzzle"):
@@ -90,6 +94,7 @@ def main():
             st.session_state.original_grid = sample.copy()
             st.session_state.solution_steps = []
             st.session_state.current_step = 0
+            st.session_state.grid_version += 1
             st.rerun()
     
     # Main content area
@@ -202,8 +207,9 @@ def render_sudoku_grid(validator):
         cols = st.columns(9)
         for j in range(9):
             with cols[j]:
-                key = f"cell_{i}_{j}"
-                current_value = int(st.session_state.grid[i, j]) if st.session_state.grid[i, j] != 0 else None
+                input_method_key = "num" if input_method == "Number Input (Default)" else "txt"
+                key = f"cell_{i}_{j}_{st.session_state.grid_version}_{input_method_key}"
+                current_value = int(st.session_state.grid[i, j])
                 
                 # Determine if this is an original clue
                 is_given = st.session_state.original_grid[i, j] != 0
@@ -220,14 +226,12 @@ def render_sudoku_grid(validator):
                         label_visibility="collapsed",
                         format="%d"
                     )
-                    
-                    if new_value is None:
-                        new_value = 0
                 else:
                     # Text input alternative for better responsiveness
+                    display_value = str(current_value) if current_value != 0 else ""
                     text_value = st.text_input(
                         f"Cell ({i+1},{j+1})",
-                        value=str(current_value) if current_value else "",
+                        value=display_value,
                         max_chars=1,
                         key=key,
                         disabled=is_given,
@@ -278,6 +282,7 @@ def solve_puzzle(solver_class, show_steps, validator):
             else:
                 # Apply solution immediately
                 st.session_state.grid = solution
+                st.session_state.grid_version += 1
             st.success(f"✅ Puzzle solved in {st.session_state.last_solve_time:.4f}s!")
         else:
             st.error("❌ No solution found for this puzzle")
@@ -293,6 +298,7 @@ def apply_step(step_index):
     if step_index < len(st.session_state.solution_steps):
         step = st.session_state.solution_steps[step_index]
         st.session_state.grid = step['grid'].copy()
+        st.session_state.grid_version += 1
 
 if __name__ == "__main__":
     main()
