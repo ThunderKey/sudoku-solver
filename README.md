@@ -1,7 +1,7 @@
 
 # Sudoku Solver with Plugin System
 
-An interactive Sudoku solver built with Streamlit featuring a dynamic plugin system for custom solving algorithms.
+An interactive Sudoku solver featuring a dynamic plugin system for custom solving algorithms.
 
 ## Features
 
@@ -22,24 +22,7 @@ An interactive Sudoku solver built with Streamlit featuring a dynamic plugin sys
 
 ## Local Development Setup
 
-### Option 1: Using Nix with direnv (Recommended)
-
-If you have Nix and direnv installed:
-
-```bash
-# Clone or navigate to the project
-cd sudoku-solver
-
-# Allow direnv (first time only)
-direnv allow
-
-# Run the application (dependencies are automatically installed)
-poetry run dev
-```
-
-The Nix shell will automatically provide Python 3.11 and Poetry, install dependencies, and activate the Poetry environment.
-
-### Option 2: Using Poetry directly
+### Using Poetry
 
 If you have Poetry installed:
 
@@ -48,26 +31,19 @@ If you have Poetry installed:
 poetry install
 
 # Run the application
-poetry run dev
-
-# Or use the full command
-poetry run streamlit run app.py --server.port 5000
-
-# Or activate the virtual environment
-poetry shell
-streamlit run app.py --server.port 5000
+python app.py
 ```
 
-### Option 3: Using pip
+### Using pip
 
 If you prefer pip:
 
 ```bash
-# Install dependencies
-pip install numpy streamlit
+# Install dependencies  
+pip install numpy
 
 # Run the application
-streamlit run app.py --server.port 5000
+python app.py
 ```
 
 ## Installing Nix and direnv
@@ -103,10 +79,10 @@ eval "$(direnv hook zsh)"   # for zsh
 
 1. Start the application:
    ```bash
-   poetry run streamlit run app.py --server.port 5000
+   python app.py
    ```
 
-2. Open your browser and navigate to `http://localhost:5000`
+2. The application will run as a command-line interface
 
 ### Loading Puzzles
 
@@ -176,7 +152,7 @@ The plugin will be automatically loaded on the next app restart.
 
 ```
 sudoku-solver/
-├── app.py                    # Main Streamlit application
+├── app.py                    # Main application
 ├── sudoku_core.py           # Core Sudoku classes and validation
 ├── plugin_manager.py        # Plugin loading system
 ├── file_handler.py          # File I/O operations
@@ -185,8 +161,6 @@ sudoku-solver/
 │   └── brute_force_solver.py
 ├── plugins/                 # Custom solver plugins
 │   └── sample_solver.py
-├── shell.nix               # Nix environment configuration
-├── .envrc                  # direnv configuration
 ├── pyproject.toml          # Poetry configuration
 └── README.md               # This file
 ```
@@ -229,10 +203,7 @@ poetry add --group dev package-name
 
 ### Common Issues
 
-**Port already in use**: Change the port number in the run command
-```bash
-poetry run streamlit run app.py --server.port 5001
-```
+**Application issues**: Check the console output for error messages
 
 **Solver not loading**: Check that your plugin file is in the `plugins/` directory and has no syntax errors
 
