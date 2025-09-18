@@ -50,17 +50,17 @@ experimental-features = nix-command flakes
 # Enter development environment
 nix develop
 
-# Install dependencies
+# Install dependencies  
 poetry install
-npm install
+pnpm install  # Installs all workspace dependencies
 
 # Start the application (runs both frontend and backend)
 # Click the "Run" button in Replit or use:
-# Frontend: node_modules/.bin/vite frontend --host 0.0.0.0 --port 5000
+# Frontend: cd frontend && pnpm run dev
 # Backend: python -m uvicorn backend:app --host 0.0.0.0 --port 8000 --reload
 ```
 
-### Manual Setup with Poetry and npm
+### Manual Setup with Poetry and pnpm
 
 If you prefer to run the applications manually without Nix:
 
@@ -78,14 +78,14 @@ poetry run python -m uvicorn backend:app --host 0.0.0.0 --port 8000 --reload
 # Navigate to frontend directory
 cd frontend
 
-# Install Node.js dependencies
-npm install
+# Install Node.js dependencies (run from project root)
+pnpm install
 
 # Start the Vue.js development server
-npm run dev
+pnpm run dev
 ```
 
-**Note**: The frontend npm commands must be run from the `frontend/` directory, while Poetry commands should be run from the root directory of the project.
+**Note**: Run `pnpm install` from the project root (workspace root), but `pnpm run` commands from the `frontend/` directory. Poetry commands should be run from the root directory of the project.
 
 The application will be available at:
 - **Frontend**: http://localhost:5000
@@ -221,7 +221,8 @@ sudoku-solver/
 │   └── sample_solver.py
 ├── flake.nix               # Nix development environment
 ├── pyproject.toml          # Python dependencies (Poetry)
-└── package.json            # Node.js dependencies
+├── pnpm-workspace.yaml     # pnpm workspace configuration
+└── pnpm-lock.yaml          # pnpm lockfile for all dependencies
 ```
 
 ## API Endpoints
@@ -254,13 +255,13 @@ sudoku-solver/
 ```bash
 # Start frontend dev server
 cd frontend
-npm run dev
+pnpm run dev
 
 # Build for production
-npm run build
+pnpm run build
 
 # Lint code
-npm run lint
+pnpm run lint
 ```
 
 ### Backend Development
@@ -280,7 +281,7 @@ python -m uvicorn backend:app --reload --log-level debug
 poetry add package-name
 
 # Node.js dependencies
-cd frontend && npm install package-name
+cd frontend && pnpm install package-name
 ```
 
 ## Performance Tips

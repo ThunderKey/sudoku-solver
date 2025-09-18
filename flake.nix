@@ -17,16 +17,25 @@
           buildInputs = with pkgs; [
             python311
             poetry
+            nodejs_20
+            nodePackages.pnpm
           ];
           
           shellHook = ''
             echo "Setting up development environment..."
             if [ -f pyproject.toml ]; then
-              echo "Installing dependencies with Poetry..."
+              echo "Installing Python dependencies with Poetry..."
               poetry install
               echo "Poetry environment is ready!"
-              echo "Run 'poetry run dev' to start the application"
             fi
+            if [ -f pnpm-workspace.yaml ]; then
+              echo "Installing workspace dependencies with pnpm..."
+              pnpm install --frozen-lockfile
+              echo "pnpm workspace dependencies are ready!"
+            fi
+            echo "Development environment setup complete!"
+            echo "Run 'poetry run dev' to start the backend"
+            echo "Run 'cd frontend && pnpm run dev' to start the frontend"
           '';
         };
       });

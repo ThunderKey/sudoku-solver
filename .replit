@@ -33,7 +33,7 @@ outputType = "webview"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "node_modules/.bin/vite frontend --host 0.0.0.0 --port 5000"
+args = "cd frontend && pnpm run dev"
 waitForPort = 5000
 
 [[workflows.workflow]]
