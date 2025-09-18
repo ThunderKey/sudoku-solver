@@ -10,6 +10,10 @@ packages = [{include = "sudoku_solver", from = "."}]
 python = "^3.11"
 numpy = "^2.3.3"
 streamlit = "^1.49.1"
+fastapi = "^0.116.2"
+uvicorn = "^0.35.0"
+python-multipart = "^0.0.20"
+python-json-logger = "^3.3.0"
 
 [tool.poetry.scripts]
 dev = "streamlit run app.py --server.port 5000"
