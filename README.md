@@ -60,6 +60,33 @@ npm install
 # Backend: python -m uvicorn backend:app --host 0.0.0.0 --port 8000 --reload
 ```
 
+### Manual Setup with Poetry and npm
+
+If you prefer to run the applications manually without Nix:
+
+#### Backend Setup (FastAPI)
+```bash
+# Install Python dependencies with Poetry (run from root directory)
+poetry install
+
+# Start the FastAPI backend server
+poetry run python -m uvicorn backend:app --host 0.0.0.0 --port 8000 --reload
+```
+
+#### Frontend Setup (Vue.js)
+```bash
+# Navigate to frontend directory
+cd frontend
+
+# Install Node.js dependencies
+npm install
+
+# Start the Vue.js development server
+npm run dev
+```
+
+**Note**: The frontend npm commands must be run from the `frontend/` directory, while Poetry commands should be run from the root directory of the project.
+
 The application will be available at:
 - **Frontend**: http://localhost:5000
 - **Backend API**: http://localhost:8000
