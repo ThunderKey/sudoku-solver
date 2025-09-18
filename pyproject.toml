@@ -9,14 +9,11 @@ packages = [{include = "sudoku_solver", from = "."}]
 [tool.poetry.dependencies]
 python = "^3.11"
 numpy = "^2.3.3"
-streamlit = "^1.49.1"
 fastapi = "^0.116.2"
 uvicorn = "^0.35.0"
 python-multipart = "^0.0.20"
 python-json-logger = "^3.3.0"
 
-[tool.poetry.scripts]
-dev = "streamlit run app.py --server.port 5000"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^7.4.0"
@@ -36,5 +33,4 @@ description = "Add your description here"
 requires-python = ">=3.11"
 dependencies = [
     "numpy>=2.3.3",
-    "streamlit>=1.49.1",
 ]
