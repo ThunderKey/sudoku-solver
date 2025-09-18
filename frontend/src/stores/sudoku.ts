@@ -335,6 +335,9 @@ export const useSudokuStore = defineStore('sudoku', {
 
     clearError() {
       this.error = null
-    }
+    },
+
+
+
   }
 })
