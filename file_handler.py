@@ -2,7 +2,6 @@ import json
 import numpy as np
 from pathlib import Path
 from typing import Optional
-import streamlit as st
 
 class FileHandler:
     """Handles loading and saving of Sudoku puzzles"""
