@@ -10,26 +10,36 @@ Preferred communication style: Simple, everyday language.
 
 ## System Architecture
 
-### Frontend Architecture
-- **Streamlit Web Interface**: Single-page application using Streamlit for the user interface
-- **Session State Management**: Maintains puzzle state, solution steps, and user progress across interactions
-- **Interactive Grid Display**: Visual representation of the Sudoku grid with real-time updates
-- **Sidebar Controls**: File upload, solver selection, and solution playback controls
+The application follows the **Model-View-Controller (MVC)** architectural pattern for clean separation of concerns and maintainability.
 
-### Backend Architecture
-- **Modular Core System**: Separation of concerns with distinct modules for grid operations, validation, and solving
-- **Plugin-Based Solver Architecture**: Dynamic loading system that discovers and imports solver plugins at runtime
-- **Abstract Base Classes**: SudokuSolver base class defines the interface that all solver plugins must implement
-- **State Tracking**: Comprehensive step-by-step solution tracking for visualization and debugging
+### Model Layer (model.py)
+- **SudokuModel**: Central model class managing complete puzzle state, solution tracking, and performance metrics
+- **SudokuGrid**: Enhanced grid operations with given/solved cell distinction and state management
+- **SudokuValidator**: Comprehensive validation utilities with conflict detection and rule checking
+- **SolutionStep**: Structured data class for step-by-step solution tracking
+- **Data Integrity**: Maintains separation between original puzzle and current state
 
-### Core Components
-- **SudokuGrid**: Handles grid state management and basic operations
-- **SudokuValidator**: Provides validation logic for Sudoku rules and puzzle states
-- **PluginManager**: Dynamically discovers and loads solver implementations from both built-in and custom plugin directories
-- **FileHandler**: Manages loading puzzles from JSON and text file formats
+### View Layer (view.py)  
+- **MainView**: Primary view coordinator that orchestrates all UI components
+- **SudokuGridView**: Renders the interactive 9x9 grid with authentic styling and cell input handling
+- **SidebarView**: File operations and grid management controls
+- **SolverControlsView**: Solver selection, step navigation, and performance display
+- **Clean Separation**: Views only handle presentation logic and user input collection
+
+### Controller Layer (controller.py)
+- **SudokuController**: Central business logic coordinator managing user actions
+- **Model-View Mediation**: Bridges interactions between model state and view rendering
+- **Action Processing**: Handles file I/O, puzzle solving, step navigation, and cell updates
+- **State Synchronization**: Maintains compatibility with Streamlit session state for optimal performance
+
+### Application Entry Point (app.py)
+- **Streamlined Coordinator**: Minimal main application that initializes MVC components
+- **Action Dispatcher**: Central handler for all user interactions through clean action dictionary pattern
+- **Clean Architecture**: Separates initialization, rendering, and action handling into distinct phases
 
 ### Data Storage
-- **In-Memory State**: All puzzle data and solution steps stored in Streamlit session state
+- **Model-Centric State**: All puzzle data centrally managed through SudokuModel
+- **Session State Bridge**: Controller maintains backward compatibility with Streamlit session patterns
 - **File-Based Input**: Support for JSON and text file formats for puzzle import
 - **No Persistent Database**: Stateless application with no permanent data storage
 
