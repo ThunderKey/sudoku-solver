@@ -1,85 +1,98 @@
 <script setup lang="ts">
-import { RouterLink, RouterView } from 'vue-router'
-import HelloWorld from './components/HelloWorld.vue'
+import { RouterView } from 'vue-router'
+import { onMounted } from 'vue'
+import { useSudokuStore } from '@/stores/sudoku'
+
+const sudokuStore = useSudokuStore()
+
+onMounted(async () => {
+  // Initialize the application once
+  if (!sudokuStore.initialized) {
+    await Promise.all([
+      sudokuStore.loadGrid(),
+      sudokuStore.loadSolvers()
+    ])
+    sudokuStore.initialized = true
+  }
+})
 </script>
 
 <template>
-  <header>
-    <img alt="Vue logo" class="logo" src="@/assets/logo.svg" width="125" height="125" />
+  <div id="app" class="app-container">
+    <header class="app-header">
+      <h1>Sudoku Solver</h1>
+      <p class="subtitle">Interactive Sudoku Puzzle Solver with Step-by-Step Solutions</p>
+    </header>
 
-    <div class="wrapper">
-      <HelloWorld msg="You did it!" />
+    <main class="app-main">
+      <RouterView />
+    </main>
 
-      <nav>
-        <RouterLink to="/">Home</RouterLink>
-        <RouterLink to="/about">About</RouterLink>
-      </nav>
-    </div>
-  </header>
-
-  <RouterView />
+    <footer class="app-footer">
+      <p>&copy; 2025 Sudoku Solver - Built with Vue.js and PrimeVue</p>
+    </footer>
+  </div>
 </template>
 
 <style scoped>
-header {
-  line-height: 1.5;
-  max-height: 100vh;
+.app-container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  font-family: Arial, sans-serif;
 }
 
-.logo {
-  display: block;
-  margin: 0 auto 2rem;
-}
-
-nav {
-  width: 100%;
-  font-size: 12px;
+.app-header {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
   text-align: center;
-  margin-top: 2rem;
+  padding: 2rem 1rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
-nav a.router-link-exact-active {
-  color: var(--color-text);
+.app-header h1 {
+  margin: 0 0 0.5rem 0;
+  font-size: 2.5rem;
+  font-weight: 700;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
 }
 
-nav a.router-link-exact-active:hover {
-  background-color: transparent;
+.subtitle {
+  margin: 0;
+  font-size: 1.1rem;
+  opacity: 0.9;
+  font-weight: 300;
 }
 
-nav a {
-  display: inline-block;
-  padding: 0 1rem;
-  border-left: 1px solid var(--color-border);
+.app-main {
+  flex: 1;
+  background: #f8f9fa;
+  padding: 2rem 1rem;
 }
 
-nav a:first-of-type {
-  border: 0;
+.app-footer {
+  background: #343a40;
+  color: #adb5bd;
+  text-align: center;
+  padding: 1rem;
+  font-size: 0.9rem;
 }
 
-@media (min-width: 1024px) {
-  header {
-    display: flex;
-    place-items: center;
-    padding-right: calc(var(--section-gap) / 2);
+.app-footer p {
+  margin: 0;
+}
+
+@media (max-width: 768px) {
+  .app-header h1 {
+    font-size: 2rem;
   }
-
-  .logo {
-    margin: 0 2rem 0 0;
-  }
-
-  header .wrapper {
-    display: flex;
-    place-items: flex-start;
-    flex-wrap: wrap;
-  }
-
-  nav {
-    text-align: left;
-    margin-left: -1rem;
+  
+  .subtitle {
     font-size: 1rem;
-
-    padding: 1rem 0;
-    margin-top: 1rem;
+  }
+  
+  .app-main {
+    padding: 1rem 0.5rem;
   }
 }
 </style>
