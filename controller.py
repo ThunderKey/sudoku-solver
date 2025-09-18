@@ -1,4 +1,3 @@
-import streamlit as st
 import numpy as np
 import time
 from typing import Optional, Dict, Any, Tuple, List
@@ -12,38 +11,27 @@ class SudokuController:
     """Controller layer for the Sudoku application - handles business logic and user actions"""
     
     def __init__(self):
-        self.model = self._get_model()
-        self.plugin_manager = self._get_plugin_manager()
+        self.model = SudokuModel()
+        self.plugin_manager = PluginManager()
         self.file_handler = FileHandler()
-        self._initialize_session_state()
+        self.solving = False
+        # Internal state attributes for view compatibility
+        self.grid = None
+        self.original_grid = None
+        self.grid_version = 0
+        self.solution_steps = []
+        self.current_step = 0
+        self.last_solve_time = None
+        self.last_step_count = None
+        self._sync_internal_state()
     
-    def _get_model(self) -> SudokuModel:
-        """Get or create model from session state"""
-        if 'model' not in st.session_state:
-            st.session_state.model = SudokuModel()
-        return st.session_state.model
-    
-    def _get_plugin_manager(self) -> PluginManager:
-        """Get or create plugin manager from session state"""
-        if 'plugin_manager' not in st.session_state:
-            st.session_state.plugin_manager = PluginManager()
-        return st.session_state.plugin_manager
-    
-    def _initialize_session_state(self):
-        """Initialize session state variables for backwards compatibility with view"""
-        # Keep these for view compatibility
-        if 'solving' not in st.session_state:
-            st.session_state.solving = False
-        
-        # Sync model state with session state
-        self._sync_session_state()
     
     def load_puzzle_from_file(self, uploaded_file) -> tuple[bool, str]:
         """Load puzzle from uploaded file"""
         try:
             grid = self.file_handler.load_puzzle(uploaded_file)
             self.model.load_puzzle(grid)
-            self._sync_session_state()
+            self._sync_internal_state()
             return True, "Puzzle loaded successfully!"
         except Exception as e:
             return False, f"Error loading puzzle: {str(e)}"
@@ -56,7 +44,7 @@ class SudokuController:
     def clear_grid(self):
         """Clear the entire grid and reset state"""
         self.model.clear_puzzle(keep_given=False)
-        self._sync_session_state()
+        self._sync_internal_state()
     
     def load_sample_puzzle(self):
         """Load a predefined sample puzzle"""
@@ -72,37 +60,37 @@ class SudokuController:
             [0, 0, 0, 0, 8, 0, 0, 7, 9]
         ])
         self.model.load_puzzle(sample)
-        self._sync_session_state()
+        self._sync_internal_state()
     
-    def _sync_session_state(self):
-        """Sync model state with session state for view compatibility"""
+    def _sync_internal_state(self):
+        """Sync model state with internal state for view compatibility"""
         grid_state = self.model.get_grid_state()
-        st.session_state.grid = grid_state['grid']
-        st.session_state.original_grid = grid_state['original_grid']
-        st.session_state.grid_version = grid_state['version']
+        self.grid = grid_state['grid']
+        self.original_grid = grid_state['original_grid']
+        self.grid_version = grid_state['version']
         
         # Sync solution state
         solution_info = self.model.get_solution_info()
         if solution_info:
             # Convert SolutionStep objects back to dicts for view compatibility
-            st.session_state.solution_steps = [step.to_dict() for step in self.model.solution_steps]
-            st.session_state.current_step = solution_info['current_step']
+            self.solution_steps = [step.to_dict() for step in self.model.solution_steps]
+            self.current_step = solution_info['current_step']
         else:
-            st.session_state.solution_steps = []
-            st.session_state.current_step = 0
+            self.solution_steps = []
+            self.current_step = 0
         
         # Sync metrics
         metrics = self.model.get_performance_metrics()
         if metrics:
-            st.session_state.last_solve_time = metrics['solve_time']
+            self.last_solve_time = metrics['solve_time']
             if 'step_count' in metrics:
-                st.session_state.last_step_count = metrics['step_count']
+                self.last_step_count = metrics['step_count']
     
     def update_cell(self, row: int, col: int, value: int) -> bool:
         """Update a cell value if the cell is not a given (original) value"""
         success = self.model.update_cell(row, col, value)
         if success:
-            self._sync_session_state()
+            self._sync_internal_state()
         return success
     
     def get_grid_state(self) -> Dict[str, Any]:
@@ -119,7 +107,7 @@ class SudokuController:
         if grid_state['is_empty']:
             return False, "Please enter a puzzle first"
         
-        st.session_state.solving = True
+        self.solving = True
         self.model.is_solving = True
         
         try:
@@ -146,7 +134,7 @@ class SudokuController:
                     # Preserve original given cells
                     self.model.current_grid.given_cells = self.model.original_grid.given_cells.copy()
             
-            self._sync_session_state()
+            self._sync_internal_state()
             
             if solution is not None:
                 solve_time_str = f"{self.model.last_solve_time:.4f}s"
@@ -157,7 +145,7 @@ class SudokuController:
         except Exception as e:
             return False, f"Error solving puzzle: {str(e)}"
         finally:
-            st.session_state.solving = False
+            self.solving = False
             self.model.is_solving = False
     
     def navigate_solution_step(self, direction: str) -> bool:
@@ -176,7 +164,7 @@ class SudokuController:
         if new_step != solution_info['current_step']:
             success = self.model.navigate_to_step(new_step)
             if success:
-                self._sync_session_state()
+                self._sync_internal_state()
             return success
         return False
     
