@@ -1,8 +1,8 @@
 import { defineStore } from 'pinia'
 import axios from 'axios'
 
-// API base URL - use relative for same origin or configure for environment
-const API_BASE = import.meta.env.VITE_API_BASE_URL || '/api'
+// API base URL - use proxy configuration
+const API_BASE = '/api'
 
 export interface GridState {
   grid: number[][]

@@ -18,23 +18,43 @@ author = "agent"
 
 [[workflows.workflow.tasks]]
 task = "workflow.run"
-args = "Sudoku Solver App"
+args = "Vue.js Frontend"
+
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "FastAPI Backend"
 
 [[workflows.workflow]]
-name = "Sudoku Solver App"
+name = "Vue.js Frontend"
 author = "agent"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "streamlit run app.py --server.port 5000"
+args = "node_modules/.bin/vite frontend --host 0.0.0.0 --port 5000"
 waitForPort = 5000
 
 [workflows.workflow.metadata]
 outputType = "webview"
 
+[[workflows.workflow]]
+name = "FastAPI Backend"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "python -m uvicorn backend:app --host 0.0.0.0 --port 8000 --reload --reload-exclude=\"node_modules/*\""
+waitForPort = 8000
+
+[workflows.workflow.metadata]
+outputType = "console"
+
 [[ports]]
 localPort = 5000
 externalPort = 80
+
+[[ports]]
+localPort = 8000
+externalPort = 8000
 
 [[ports]]
 localPort = 37115
